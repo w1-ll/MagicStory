@@ -1,10 +1,15 @@
 import React, { useState } from 'react';
+import { useNavigation, NavigationProp } from '@react-navigation/native';
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { supabase } from '../lib/supabase';
 import { Button } from '@rneui/themed';
 import { Picker } from '@react-native-picker/picker';
+type RootStackParamList = {
+    Story: { story: string; gender: string };
+};
 
 export default function HomePage() {
+const navigation = useNavigation<NavigationProp<RootStackParamList>>();
     const [step, setStep] = useState<'genres' | 'stories' | 'gender' | 'start' | null>('genres');
     const [selectedGenre, setSelectedGenre] = useState<keyof typeof stories | null>(null);
     const [selectedStory, setSelectedStory] = useState<string | null>(null);
@@ -135,7 +140,10 @@ export default function HomePage() {
                         <Button
                             buttonStyle={styles.buttonStyle}
                             title="Start"
-                            onPress={handleStartStory}
+                            onPress={() => {
+                                handleStartStory();
+                                navigation.navigate('Story', { story: selectedStory, gender: selectedGender });
+                            }}
                         />
                     </View>
                     <View style={styles.verticallySpaced}>
