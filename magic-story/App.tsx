@@ -4,6 +4,7 @@ import Account from './components/Account';
 import { View, ActivityIndicator } from 'react-native';
 import { Session } from '@supabase/supabase-js';
 import AppNavigator from './components/AppNavigator';
+import LoggedInNavigator from './components/LoggedInNavigator';
 
 export default function App() {
   const [session, setSession] = useState<Session | null | undefined>(undefined); // undefined for initial loading state
@@ -36,7 +37,7 @@ export default function App() {
 
   return (
     <View style={{ flex: 1 }}>
-      {session && session.user ? <Account key={session.user.id} session={session} /> : <AppNavigator />}
+      {session && session.user ? <LoggedInNavigator key={session.user.id} session={session} /> : <AppNavigator />}
     </View>
   );
 }
