@@ -1,14 +1,35 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, Image, TouchableOpacity, ImageBackground } from 'react-native';
 import { supabase } from '../lib/supabase';
 import { Button } from '@rneui/themed';
 import { Picker } from '@react-native-picker/picker';
 
-export default function HomePage() {
+export default function HomePage({ navigation }: { navigation: any }) {
     const [step, setStep] = useState<'genres' | 'stories' | 'gender' | 'start' | null>('genres');
     const [selectedGenre, setSelectedGenre] = useState<keyof typeof stories | null>(null);
     const [selectedStory, setSelectedStory] = useState<string | null>(null);
     const [selectedGender, setSelectedGender] = useState<string | null>(null);
+    const [selectedAge, setSelectedAge] = useState<number | null>(null);
+
+    useEffect(() => {
+        async function updateAge() {
+            const user = await supabase.auth.getUser();
+            const thisUser = user.data.user ?? null;
+            const { data, error: profileError } = await supabase
+                .from('profiles')
+                .update([
+                    { age: selectedAge }
+                ])
+                .eq('id', thisUser?.id);
+
+            if (profileError) {
+                console.error('Error adding profile:', profileError);
+            } else {
+                console.log('User created and profile added successfully:', data);
+            }
+        }
+        updateAge();
+    }, [selectedAge]);
 
     const stories = {
         Morals: [
@@ -16,16 +37,16 @@ export default function HomePage() {
             { title: 'The Boy Who Cried Wolf', image: require('../assets/wolf.jpg') },
         ],
         Adventure: [
-            { title: 'The Lost Treasure', image: require('../assets/lost_treasure.jpg')  },
-            { title: 'Jungle Book', image: require('../assets/jungle_book.jpg')  },
+            { title: 'The Lost Treasure', image: require('../assets/lost_treasure.jpg') },
+            { title: 'Jungle Book', image: require('../assets/jungle_book.jpg') },
         ],
         Action: [
-            { title: 'Heroic Rescue', image: require('../assets/rescue_heroes.jpg')  },
+            { title: 'Heroic Rescue', image: require('../assets/rescue_heroes.jpg') },
             { title: 'Spy Kids', image: require('../assets/Spy_Kids.jpg') },
         ],
         Princess: [
             { title: 'Frozen', image: require('../assets/Frozen.jpg') },
-            { title: 'Princess and the Pea', image: require('../assets/Princess.jpg')  },
+            { title: 'Princess and the Pea', image: require('../assets/Princess.jpg') },
         ],
     };
 
@@ -63,9 +84,23 @@ export default function HomePage() {
     };
 
     return (
-        <View style={styles.container}>
+        <ImageBackground source={require('@/assets/background.jpeg')}
+            style={styles.container}
+        >
+
             {step === 'genres' && (
                 <>
+                    <Text style={styles.title}>Select Your Age (3-8yrs)</Text>
+                    <Picker
+                        selectedValue={selectedAge}
+                        onValueChange={(itemValue) => setSelectedAge(itemValue)}
+                        style={styles.picker}
+                        placeholder='Select Age'
+                    >
+                        {[3, 4, 5, 6, 7, 8].map((age) => (
+                            <Picker.Item key={age} label={`${age} years old`} value={age} />
+                        ))}
+                    </Picker>
                     <Text style={styles.title}>Select a Genre</Text>
                     <Picker
                         selectedValue={selectedGenre}
@@ -135,23 +170,24 @@ export default function HomePage() {
                         <Button
                             buttonStyle={styles.buttonStyle}
                             title="Start"
-                            onPress={handleStartStory}
+                            onPress={navigation.navigate('Story')}
                         />
                     </View>
-                    <View style={styles.verticallySpaced}>
+                    <View style={[styles.verticallySpaced]}>
                         <Button buttonStyle={styles.backButtonStyle} title="Back" onPress={handleBack} />
                     </View>
                 </>
             )}
 
-            <View style={styles.verticallySpaced}>
+            <View style={[styles.verticallySpaced, styles.signOutButton]}>
                 <Button
                     buttonStyle={styles.signOutButtonStyle}
                     title="Sign Out"
                     onPress={() => supabase.auth.signOut()}
                 />
             </View>
-        </View>
+        </ImageBackground>
+
     );
 }
 
@@ -161,7 +197,8 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         padding: 12,
         alignItems: 'center',
-        backgroundColor: '#dbe9ee',
+        // backgroundColor: '#dbe9ee',
+        paddingTop: 110,
     },
     title: {
         fontSize: 20,
@@ -211,5 +248,14 @@ const styles = StyleSheet.create({
         backgroundColor: '#e74c3c',
         borderRadius: 25,
         marginTop: 20,
+
     },
+    age: {
+        color: '#36454F',
+        paddingLeft: 12,
+    },
+    signOutButton: {
+        flex: 1,
+        justifyContent: 'flex-end',
+    }
 });
