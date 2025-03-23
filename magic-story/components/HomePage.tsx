@@ -12,20 +12,20 @@ export default function HomePage() {
 
     const stories = {
         Morals: [
-            { title: 'The Honest Woodcutter', image: 'https://example.com/morals1.jpg' },
-            { title: 'The Boy Who Cried Wolf', image: 'https://example.com/morals2.jpg' },
+            { title: 'The Honest Woodcutter', image: require('../assets/Honest_Wood_Cutter.jpg') },
+            { title: 'The Boy Who Cried Wolf', image: require('../assets/wolf.jpg') },
         ],
         Adventure: [
-            { title: 'The Lost Treasure', image: 'https://example.com/adventure1.jpg' },
-            { title: 'Jungle Quest', image: 'https://example.com/adventure2.jpg' },
+            { title: 'The Lost Treasure', image: require('../assets/lost_treasure.jpg')  },
+            { title: 'Jungle Book', image: require('../assets/jungle_book.jpg')  },
         ],
         Action: [
-            { title: 'Heroic Rescue', image: 'https://example.com/action1.jpg' },
-            { title: 'Battle of the Brave', image: 'https://example.com/action2.jpg' },
+            { title: 'Heroic Rescue', image: require('../assets/rescue_heroes.jpg')  },
+            { title: 'Spy Kids', image: require('../assets/Spy_Kids.jpg') },
         ],
         Princess: [
-            { title: 'The Enchanted Castle', image: 'https://example.com/princess1.jpg' },
-            { title: 'The Royal Ball', image: 'https://example.com/princess2.jpg' },
+            { title: 'Frozen', image: require('../assets/Frozen.jpg') },
+            { title: 'Princess and the Pea', image: require('../assets/Princess.jpg')  },
         ],
     };
 
@@ -90,7 +90,14 @@ export default function HomePage() {
                                 style={styles.storyCard}
                                 onPress={() => handleStorySelect(story.title)}
                             >
-                                <Image source={{ uri: story.image }} style={styles.storyImage} />
+                                <Image
+                                    source={
+                                        typeof story.image === 'string'
+                                            ? { uri: story.image }
+                                            : story.image
+                                    }
+                                    style={styles.storyImage}
+                                />
                                 <Text style={styles.storyTitle}>{story.title}</Text>
                             </TouchableOpacity>
                         ))}

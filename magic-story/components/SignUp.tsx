@@ -38,7 +38,7 @@ export default function SignUp({ navigation }: { navigation: any }) {
     return (
         <View style={styles.container}>
             <Image
-                source={require('@/assets/magic-story-logo.jpg')}
+                source={require('@/assets/LogoDoOver.png')}
                 style={styles.image}
             />
             <Text style={styles.heading}>Sign up</Text>
