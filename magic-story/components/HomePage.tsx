@@ -5,9 +5,10 @@ import { Button } from '@rneui/themed';
 import { Picker } from '@react-native-picker/picker';
 
 export default function HomePage() {
-    const [step, setStep] = useState<'genres' | 'stories' | 'gender' | null>('genres');
+    const [step, setStep] = useState<'genres' | 'stories' | 'gender' | 'start' | null>('genres');
     const [selectedGenre, setSelectedGenre] = useState<keyof typeof stories | null>(null);
     const [selectedStory, setSelectedStory] = useState<string | null>(null);
+    const [selectedGender, setSelectedGender] = useState<string | null>(null);
 
     const stories = {
         Morals: [
@@ -38,6 +39,11 @@ export default function HomePage() {
         setStep('gender');
     };
 
+    const handleGenderSelect = (gender: string) => {
+        setSelectedGender(gender);
+        setStep('start');
+    };
+
     const handleBack = () => {
         if (step === 'stories') {
             setStep('genres');
@@ -45,7 +51,15 @@ export default function HomePage() {
         } else if (step === 'gender') {
             setStep('stories');
             setSelectedStory(null);
+        } else if (step === 'start') {
+            setStep('gender');
+            setSelectedGender(null);
         }
+    };
+
+    const handleStartStory = () => {
+        console.log(`Starting story "${selectedStory}" for a ${selectedGender}`);
+        // Add logic to start the story
     };
 
     return (
@@ -95,10 +109,28 @@ export default function HomePage() {
                             <Button
                                 buttonStyle={styles.buttonStyle}
                                 title={gender}
-                                onPress={() => console.log(`${gender} selected for ${selectedStory}`)}
+                                onPress={() => handleGenderSelect(gender)}
                             />
                         </View>
                     ))}
+                    <View style={styles.verticallySpaced}>
+                        <Button buttonStyle={styles.backButtonStyle} title="Back" onPress={handleBack} />
+                    </View>
+                </>
+            )}
+
+            {step === 'start' && selectedStory && selectedGender && (
+                <>
+                    <Text style={styles.title}>
+                        Ready to start "{selectedStory}" for a {selectedGender}?
+                    </Text>
+                    <View style={styles.verticallySpaced}>
+                        <Button
+                            buttonStyle={styles.buttonStyle}
+                            title="Start"
+                            onPress={handleStartStory}
+                        />
+                    </View>
                     <View style={styles.verticallySpaced}>
                         <Button buttonStyle={styles.backButtonStyle} title="Back" onPress={handleBack} />
                     </View>
