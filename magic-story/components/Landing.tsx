@@ -7,7 +7,7 @@ export default function Landing({ navigation }: { navigation: any }) {
             <Text style={styles.text}>Magic Story</Text>
             <Text style={styles.subText}>Create Your Own Adventure and Choose What Happens Next in a Magical World!</Text>
             <Image
-                source={require('@/assets/magic-story-logo.jpg')}
+                source={require('@/assets/LogoDoOver.png')}
                 style={styles.image}
             />
             <Pressable style={styles.button} onPress={() => { navigation.navigate('Login') }}>
